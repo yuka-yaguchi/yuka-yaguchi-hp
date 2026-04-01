@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yuka | Energy Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:    #fdfcf9;
+      --mist:     #eef4f2;
+      --sage:     #b2c9be;
+      --moss:     #7a9e8e;
+      --deep:     #3c5c50;
+      --ink:      #1e2e28;
+      --gold:     #c5a96b;
+      --light-text: #6b8078;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--ink);
+      font-family: 'Shippori Mincho', serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(253,252,249,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(178,201,190,0.3);
+      animation: fadeDown .8s ease both;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--deep);
+      letter-spacing: .05em;
+      white-space: nowrap;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; flex-wrap: nowrap; }
+    .nav-links a {
+      text-decoration: none; color: var(--light-text);
+      font-size: .78rem; letter-spacing: .12em;
+      white-space: nowrap;
+      transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--deep); }
+
+    /* ハンバーガー */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: .3rem; background: none; border: none;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--deep); transition: all .3s;
+    }
+    .hamburger.open span:nth-child(1){ transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2){ opacity: 0; }
+    .hamburger.open span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); }
+
+    @media(max-width: 700px){
+      nav { padding: .9rem 1.2rem; }
+      .nav-logo { font-size: .85rem; }
+      .hamburger { display: flex; }
+      .nav-links {
+        display: none; flex-direction: column;
+        position: fixed; top: 54px; left: 0; right: 0;
+        background: rgba(253,252,249,.97);
+        padding: 2rem 2rem;
+        gap: 1.6rem;
+        border-bottom: 1px solid rgba(178,201,190,.3);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .88rem; letter-spacing: .15em; color: var(--deep); }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid; place-items: center;
+      position: relative; overflow: hidden;
+      padding: 8rem 2rem 4rem;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 30% 40%, rgba(178,201,190,.28) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 70%, rgba(197,169,107,.12) 0%, transparent 60%),
+        linear-gradient(170deg, #fdfcf9 0%, #eef4f2 100%);
+    }
+    /* 繊細な円 */
+    .hero-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(122,158,142,.15);
+      animation: pulse 8s ease-in-out infinite;
+    }
+    .hero-ring:nth-child(1){ width:480px; height:480px; top:50%; left:50%; transform:translate(-50%,-50%); animation-delay:0s; }
+    .hero-ring:nth-child(2){ width:680px; height:680px; top:50%; left:50%; transform:translate(-50%,-50%); animation-delay:1.5s; }
+    .hero-ring:nth-child(3){ width:900px; height:900px; top:50%; left:50%; transform:translate(-50%,-50%); animation-delay:3s; }
+
+    .hero-content {
+      position: relative; text-align: center;
+      animation: riseUp 1.2s ease .3s both;
+    }
+    .hero-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1rem,2vw,1.2rem);
+      color: var(--moss); letter-spacing: .3em;
+      margin-bottom: 1.6rem;
+    }
+    .hero-title {
+      font-size: clamp(2.4rem,6vw,4.8rem);
+      font-weight: 500; line-height: 1.55;
+      letter-spacing: .06em;
+      color: var(--ink);
+      margin-bottom: 1.8rem;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--deep);
+    }
+    .hero-sub {
+      font-size: clamp(.9rem,1.5vw,1.05rem);
+      color: var(--light-text); letter-spacing: .2em;
+      line-height: 2.2; margin-bottom: 3.2rem;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: .9rem 3rem;
+      border: 1px solid var(--moss);
+      color: var(--deep); text-decoration: none;
+      font-size: .85rem; letter-spacing: .22em;
+      transition: background .35s, color .35s;
+    }
+    .hero-cta:hover { background: var(--deep); color: var(--white); }
+
+    /* ─── SECTIONS COMMON ─── */
+    section { padding: 7rem 2rem; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: .85rem;
+      color: var(--moss); letter-spacing: .4em;
+      margin-bottom: .8rem;
+    }
+    .section-title {
+      font-size: clamp(1.5rem,3vw,2.2rem);
+      font-weight: 500; letter-spacing: .1em;
+      color: var(--deep); margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(178,201,190,.4);
+    }
+
+    /* ─── ABOUT ─── */
+    .about { background: var(--mist); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem; align-items: start;
+    }
+    .about-badge {
+      width: 100%; aspect-ratio: 1;
+      max-width: 260px;
+      background: linear-gradient(135deg, var(--sage) 0%, var(--moss) 100%);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; color: var(--white);
+      font-size: 1.15rem; text-align: center;
+      line-height: 1.6; padding: 1rem;
+    }
+    .about-body p {
+      line-height: 2.3; color: var(--ink);
+      font-size: .95rem; margin-bottom: 1.6rem;
+    }
+    .about-tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 2rem; }
+    .tag {
+      padding: .35rem .9rem;
+      border: 1px solid var(--sage);
+      font-size: .75rem; color: var(--deep);
+      letter-spacing: .12em;
+    }
+
+    /* ─── MENU ─── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem; margin-bottom: 4rem;
+    }
+    .menu-card {
+      background: var(--mist);
+      padding: 2.4rem 2rem;
+      border-top: 2px solid var(--sage);
+      transition: transform .3s, box-shadow .3s;
+      display: flex; flex-direction: column;
+    }
+    .menu-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(60,92,80,.08); }
+    .menu-card-name {
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--deep); letter-spacing: .1em;
+      margin-bottom: .6rem;
+    }
+    .menu-card-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: .8rem;
+      color: var(--moss); letter-spacing: .2em;
+      margin-bottom: 1.2rem;
+    }
+    .menu-card-desc {
+      font-size: .85rem; line-height: 2;
+      color: var(--light-text);
+      flex: 1;
+    }
+
+    /* 料金表 */
+    .price-table { width: 100%; border-collapse: collapse; }
+    .price-table th, .price-table td {
+      padding: 1.1rem 1.5rem;
+      text-align: left; font-size: .88rem;
+      border-bottom: 1px solid rgba(178,201,190,.3);
+    }
+    .price-table th { color: var(--moss); letter-spacing: .15em; font-weight: 400; }
+    .price-table td:last-child { color: var(--deep); font-size: 1rem; text-align: right; }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-special { color: var(--gold) !important; }
+
+    /* ─── VOICE ─── */
+    .voice { background: var(--mist); }
+    .voice-list { display: grid; gap: 1.8rem; }
+    .voice-card {
+      background: var(--white);
+      padding: 2.2rem 2.4rem;
+      border-left: 3px solid var(--sage);
+      position: relative;
+    }
+    .voice-card::before {
+      content: '\201C';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; color: var(--sage);
+      position: absolute; top: .4rem; left: 1.2rem;
+      line-height: 1;
+    }
+    .voice-text {
+      font-size: .9rem; line-height: 2.2;
+      color: var(--ink); padding-left: 1rem;
+      margin-bottom: 1rem;
+    }
+    .voice-from { font-size: .78rem; color: var(--moss); letter-spacing: .12em; }
+
+    /* ─── CONTACT ─── */
+    .contact-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .contact-inner .section-title { text-align: center; }
+    .contact-intro { font-size: .9rem; line-height: 2.2; color: var(--light-text); margin-bottom: 3rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1.4rem; text-align: left; }
+    .form-group label {
+      display: block; font-size: .78rem;
+      color: var(--moss); letter-spacing: .2em;
+      margin-bottom: .5rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: .85rem 1rem;
+      border: 1px solid rgba(178,201,190,.5);
+      background: var(--white); color: var(--ink);
+      font-family: 'Shippori Mincho', serif;
+      font-size: .88rem; outline: none;
+      transition: border-color .3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--moss); }
+    .form-group textarea { resize: vertical; min-height: 140px; }
+    .form-submit {
+      display: block; width: 100%;
+      padding: 1rem; background: var(--deep);
+      color: var(--white); border: none;
+      font-family: 'Shippori Mincho', serif;
+      font-size: .88rem; letter-spacing: .25em;
+      cursor: pointer; transition: background .3s;
+    }
+    .form-submit:hover { background: var(--moss); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink); color: rgba(255,255,255,.45);
+      text-align: center; padding: 3rem 2rem;
+      font-size: .78rem; letter-spacing: .2em;
+    }
+    footer span { color: rgba(255,255,255,.7); }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 40px; height: 1px;
+      background: var(--sage); margin: 0 auto 3rem;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes riseUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: .6; transform: translate(-50%,-50%) scale(1); }
+      50%      { opacity: .25; transform: translate(-50%,-50%) scale(1.04); }
+    }
+
+    /* scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESPONSIVE ─── */
+    @media(max-width: 700px){
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.4rem; }
+      .nav-links a { font-size: .75rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-badge { margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ヤグチユカ　エネルギークリエイター</div>
+  <button class="hamburger" id="hamburger" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" onclick="closeNav()">プロフィール</a></li>
+    <li><a href="#menu" onclick="closeNav()">メニュー</a></li>
+    <li><a href="#voice" onclick="closeNav()">お客様の声</a></li>
+    <li><a href="#contact" onclick="closeNav()">お問い合わせ</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-en">Energy Creator</p>
+    <h1 class="hero-title">
+      靈性・精神性・<br><em>體の調和</em>
+    </h1>
+    <p class="hero-sub">
+      心と體は繋がっている<br>
+      あなたの本来の輝きへ
+    </p>
+    <p style="font-family:'Shippori Mincho',serif; font-size:clamp(.85rem,1.5vw,1rem); color:var(--deep); letter-spacing:.3em; margin-bottom:3.2rem;">
+      【愛と豊かさの循環】
+    </p>
+    <a href="#menu" class="hero-cta">メニューをみる</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <p class="section-label reveal">About</p>
+    <h2 class="section-title reveal">プロフィール</h2>
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="about-badge">
+          Energy<br>Creator<br>
+          <small style="font-size:.7rem;opacity:.8;">since 2012</small>
+        </div>
+      </div>
+      <div class="about-body reveal">
+        <p>
+          愛知県在住。2012年より潜在意識の探求とエネルギーワークを始め、
+          オリジナルメソッドを持つエネルギークリエイターとして活動しています。
+        </p>
+        <p>
+          セッションの基本は、潜在意識の入れ替え。<br>
+          過去生、自己受容、體へのアプローチ、QETメソッドによる量子エネルギー調律——
+          その方にその時必要な内容で、ともに向き合っていきます。
+        </p>
+        <p>
+          変化を体感したあと、「自分でもできるようになりたい」と思う方へ、
+          口伝講座をお届けしています。<br>
+          本当は、みんなできるんです。<br>
+          ただ「見えない、聞こえない、わからない」と蓋をしているだけ。<br>
+          やり方を知らないだけで、誰もがもともと持っている力があります。
+        </p>
+        <div class="about-tags">
+          <span class="tag">エネルギーワーク</span>
+          <span class="tag">潜在意識の入れ替え</span>
+          <span class="tag">チャネリング</span>
+          <span class="tag">リーディング</span>
+          <span class="tag">自己受容ワーク</span>
+          <span class="tag">アニマルコミュニケーター</span>
+          <span class="tag">言霊設定</span>
+          <span class="tag">前世ワーク</span>
+          <span class="tag">チャクラ調整</span>
+          <span class="tag">タロット・カードリーディング</span>
+          <span class="tag">QETメソッド</span>
+          <span class="tag">身体と心の統合ワーク</span>
+          <span class="tag">防災士</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="section-inner">
+    <p class="section-label reveal">Menu</p>
+    <h2 class="section-title reveal">メニュー・料金</h2>
+
+    <div class="menu-grid">
+      <div class="menu-card reveal">
+        <p class="menu-card-name">ヤグチユカ　オリジナルセッション</p>
+        <p class="menu-card-en">Original Session</p>
+        <p class="menu-card-desc">
+          潜在意識の入れ替えを基本に、過去生・自己受容・體へのアプローチ・
+          QETメソッドによる量子エネルギー調律など、
+          その方にその時必要な内容でお届けします。<br><br>
+          変化を感じるところから、すべては始まります。
+        </p>
+        <p style="margin-top:1.2rem;font-size:.78rem;color:var(--moss);letter-spacing:.12em;">
+          ● オンライン（LINEビデオ通話・Google Meet）
+        </p>
+      </div>
+      <div class="menu-card reveal">
+        <p class="menu-card-name">QETメソッド</p>
+        <p class="menu-card-en">Quantum Energy Tuning</p>
+        <p class="menu-card-desc" style="line-height:2.8;">
+          人体が持つ周波数を調整し、<br>
+          體の各部位を素粒子レベルで整える技術。<br><br>
+          その人本来のDNA情報通りの體へと導き、<br>
+          體の機能を取り戻すだけでなく、<br>
+          まだ見ぬ隠された潜在的パフォーマンスまでも引き出します。
+        </p>
+        <p style="margin-top:1.2rem;font-size:.78rem;color:var(--moss);letter-spacing:.12em;">
+          ● オンライン（LINEビデオ通話・Google Meet）
+        </p>
+      </div>
+      <div class="menu-card reveal">
+        <p class="menu-card-name">口伝　潜在意識の入れ替え講座</p>
+        <p class="menu-card-en">〜心のブロックを解除し、本来の自分へと還る〜</p>
+        <p class="menu-card-desc">
+          潜在意識とつながる感覚さえ掴めば、誰にでもできる。<br>
+          簡単に、そして確かに。何より、今すぐに。<br><br>
+          本や紙ではなく、エネルギーごと伝える。<br>
+          あなたの内側にすでにある"力"を思い出すために。
+        </p>
+        <p style="margin-top:1.2rem;font-size:.78rem;color:var(--gold);letter-spacing:.12em;">
+          ● 対面のみ
+        </p>
+      </div>
+    </div>
+
+    <div class="divider reveal"></div>
+
+    <table class="price-table reveal">
+      <thead>
+        <tr>
+          <th>コース</th>
+          <th>時間</th>
+          <th>対応</th>
+          <th>料金（税込）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>セッション 30</td>
+          <td>30分</td>
+          <td style="font-size:.78rem;color:var(--moss);">オンライン</td>
+          <td>¥13,000</td>
+        </tr>
+        <tr>
+          <td>セッション 60</td>
+          <td>60分</td>
+          <td style="font-size:.78rem;color:var(--moss);">オンライン</td>
+          <td>¥22,000</td>
+        </tr>
+        <tr>
+          <td>セッション 90</td>
+          <td>90分</td>
+          <td style="font-size:.78rem;color:var(--moss);">オンライン</td>
+          <td>¥30,000</td>
+        </tr>
+        <tr>
+          <td class="price-special">口伝　潜在意識の入れ替え講座</td>
+          <td class="price-special">3時間</td>
+          <td style="font-size:.78rem;color:var(--gold);">対面のみ</td>
+          <td class="price-special">¥66,000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section class="voice" id="voice">
+  <div class="section-inner">
+    <p class="section-label reveal">Voice</p>
+    <h2 class="section-title reveal">お客様の声</h2>
+    <div class="voice-list">
+      <div class="voice-card reveal">
+        <p class="voice-text">
+          セッションを受けてから、ずっと抱えていた重さがすーっと消えていきました。
+          由香さんの言葉は、どこか深いところに届く感覚があります。
+          また必ず来たいと思います。
+        </p>
+        <p class="voice-from">— 40代 女性</p>
+      </div>
+      <div class="voice-card reveal">
+        <p class="voice-text">
+          口伝講座は、他では得られない特別な時間でした。
+          テキストがないからこそ、その場で起きることにすべて意味があると感じました。
+          潜在意識の仕組みが体感でわかった瞬間、涙が出てきました。
+        </p>
+        <p class="voice-from">— 30代 女性</p>
+      </div>
+      <div class="voice-card reveal">
+        <p class="voice-text">
+          QETセッションで、身体のある一点がほぐれた途端に
+          気持ちまで軽くなるという体験をしました。
+          心と體が本当に繋がっているんだと実感しました。
+        </p>
+        <p class="voice-from">— 50代 男性</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-label reveal" style="text-align:center;">Contact</p>
+    <h2 class="section-title reveal">お問い合わせ</h2>
+    <p class="contact-intro reveal">
+      セッション・講座のご予約は、こちらからどうぞ。<br>
+      通常2〜3営業日以内にご返信いたします。
+    </p>
+    <div style="text-align:center; margin-top:1rem;">
+      <a href="https://ws.formzu.net/dist/S70089507/" target="_blank" class="hero-cta" style="display:inline-block;">予約フォームへ</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>ヤグチユカ｜エネルギークリエイター</span> ｜ Aichi, Japan</p>
+  <p style="margin-top:1rem;">
+    <a href="https://ameblo.jp/face-to-face-talk-0321" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:none;letter-spacing:.15em;font-size:.78rem;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:.2rem;">Ameblo</a>
+  </p>
+</footer>
+
+<script>
+  // scroll reveal
+  const targets = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  targets.forEach(t => io.observe(t));
+
+  // hamburger
+  const btn = document.getElementById('hamburger');
+  const nav = document.getElementById('navLinks');
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('open');
+    nav.classList.toggle('open');
+  });
+  function closeNav(){
+    btn.classList.remove('open');
+    nav.classList.remove('open');
+  }
+</script>
+</body>
+</html>
